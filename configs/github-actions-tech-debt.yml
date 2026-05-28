@@ -1,0 +1,51 @@
+name: tech-debt
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy,rustfmt
+
+      - name: Install OS analyzers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck clang-tidy
+
+      - name: Install harness tools
+        run: |
+          bash scripts/install-debt-harness.sh --no-copy-configs --no-system-tools
+
+      - name: Run debt scan
+        run: |
+          python3 scripts/debt_scan.py scan --ci
+
+      - name: Upload debt artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tech-debt-results
+          path: .debt/

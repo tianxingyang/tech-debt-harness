@@ -1,0 +1,48 @@
+rules:
+  - id: python-subprocess-shell-true
+    languages: [python]
+    severity: WARNING
+    message: Avoid subprocess calls with shell=True unless the input is fully controlled and documented.
+    patterns:
+      - pattern: subprocess.$FUNC(..., shell=True, ...)
+    metadata:
+      category: security
+      confidence: medium
+
+  - id: python-unsafe-yaml-load
+    languages: [python]
+    severity: ERROR
+    message: Use yaml.safe_load instead of yaml.load for untrusted YAML.
+    pattern: yaml.load(...)
+    metadata:
+      category: security
+      confidence: high
+
+  - id: ts-explicit-dangerous-inner-html
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: Review dangerouslySetInnerHTML usage; require sanitization or a documented exception.
+    pattern: dangerouslySetInnerHTML={...}
+    metadata:
+      category: security
+      confidence: medium
+
+  - id: c-unsafe-gets
+    languages: [c, cpp]
+    severity: ERROR
+    message: gets() is unsafe; use fgets or a bounded input API.
+    pattern: gets(...)
+    metadata:
+      category: security
+      confidence: high
+
+  - id: rust-unwrap-in-library-code
+    languages: [rust]
+    severity: WARNING
+    message: Avoid unwrap/expect in library code unless the invariant is documented.
+    pattern-either:
+      - pattern: $X.unwrap()
+      - pattern: $X.expect(...)
+    metadata:
+      category: reliability
+      confidence: low

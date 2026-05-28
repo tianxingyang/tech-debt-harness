@@ -1,0 +1,32 @@
+default_stages: [pre-commit]
+repos:
+  - repo: local
+    hooks:
+      - id: debt-ruff
+        name: debt harness / ruff
+        entry: ruff check
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: true
+
+      - id: debt-eslint
+        name: debt harness / eslint
+        entry: npx eslint
+        language: system
+        types_or: [javascript, jsx, ts, tsx]
+        pass_filenames: true
+
+      - id: debt-cppcheck
+        name: debt harness / cppcheck changed files
+        entry: cppcheck --enable=warning,style,performance,portability --quiet
+        language: system
+        types_or: [c, c++]
+        pass_filenames: true
+        stages: [pre-push]
+
+      - id: debt-full-scan
+        name: debt harness / full scan
+        entry: python3 scripts/debt_scan.py scan
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
