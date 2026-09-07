@@ -1,0 +1,4 @@
+# Add intentional cppcheck suppressions here, one per line.
+# Prefer scoped suppressions:
+# unusedFunction:third_party/*
+# missingIncludeSystem
